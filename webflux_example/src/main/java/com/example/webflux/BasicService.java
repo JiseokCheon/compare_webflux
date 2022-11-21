@@ -1,6 +1,9 @@
 package com.example.webflux;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Service;
@@ -8,6 +11,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -18,16 +22,17 @@ public class BasicService {
 
     private final ReactiveRedisConnectionFactory factory;
 
-    private final ReactiveRedisOperations<String, Ad> reactiveRedisOperations;
+    private final ReactiveRedisOperations<String, Object> reactiveRedisOperations;
 
     private static final AtomicInteger count = new AtomicInteger(0);
 
+    private final ObjectMapper objectMapper;
+
     void loadData() {
         List<Ad> data = new ArrayList<>();
-        IntStream.range(0, 100000).forEach(i -> data.add(Ad.builder()
-                .id(UUID.randomUUID().toString())
-                .name("광고-" + i)
-                .weight(new Random().nextLong(0, 100000))
+        IntStream.range(0, 10000).forEach(i -> data.add(Ad.builder()
+                .id(String.valueOf(i))
+                .weight(new Random().nextLong(0, 10000))
                 .build()));
 
         Flux<Ad> stringFlux = Flux.fromIterable(data);
@@ -39,25 +44,16 @@ public class BasicService {
                 .subscribe();
     }
 
-    Flux<Ad> findReactorList() {
-        Flux<String> keys = reactiveRedisOperations.keys("*");
+    void loadTargetKey(AdTarget adTarget) {
+        reactiveRedisOperations.opsForValue().set(adTarget.getKey(), adTarget).subscribe();
+    }
 
-        keys.doOnNext(key -> System.out.println(key))
-                .subscribe();
+    Mono<Object> findReactorList(String targetKey) {
 
-        Flux.just(1, 2, 3)
-                .doOnNext(i -> System.out.println("호출: " + i))
-                .subscribe(i -> System.out.println("출력 결과: " + i));
-
-        Mono<List<String>> listMono = keys.collectSortedList();
-
-
-//        Disposable subscribe = keys.subscribe(key -> reactiveRedisOperations.opsForValue().get(keys));
-
-        return reactiveRedisOperations.keys("*")
-                .flatMap(key -> reactiveRedisOperations.opsForValue().get(key));
-//                .take(3);
-//                .takeUntil();
-
+        return reactiveRedisOperations.opsForValue().get(targetKey)
+                .flatMap(obj ->
+                        reactiveRedisOperations.opsForValue().multiGet(objectMapper.convertValue(obj, AdTarget.class).getAdsNoList())
+                );
     }
 }
+

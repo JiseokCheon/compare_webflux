@@ -7,8 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -19,23 +22,24 @@ public class BasicRouter {
     private final BasicService basicService;
 
     @Bean
-    RouterFunction<ServerResponse> empRouterList() {
+    RouterFunction<ServerResponse> routerList() {
         return route()
                 .GET("/reactive-list", serverRequest ->
                         ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .body(basicService.findReactorList(), List.class))
-
-//                .GET("/normal-list", serverRequest ->
-//                        ServerResponse.ok()
-//                                .contentType(MediaType.TEXT_EVENT_STREAM)
-//                                .body(basicService.findNormalList(), String.class))
-
+                                .body(basicService.findReactorList(serverRequest.queryParam("key").get()), List.class)
+                )
                 .GET("/data", serverRequest -> {
                     basicService.loadData();
                     return ServerResponse.ok()
                             .body(BodyInserters.fromValue("Load Data Completed"));
                 })
+                .POST("/data-target", serverRequest ->
+                        serverRequest.bodyToMono(AdTarget.class)
+                                .doOnNext(basicService::loadTargetKey)
+                                .then(ServerResponse.ok()
+                                        .body(BodyInserters.fromValue("Load Data Completed")))
+                )
                 .build();
     }
 

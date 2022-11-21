@@ -4,18 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Ad implements Serializable {
+public class AdTarget {
 
-    private String id;
+    List<String> adsNoList = new ArrayList<>();
 
-    private Long weight;
+    String key;
 
 }

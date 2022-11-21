@@ -28,13 +28,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public ReactiveRedisOperations<String, Ad> redisOperations(ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
-        Jackson2JsonRedisSerializer<Ad> serializer = new Jackson2JsonRedisSerializer<>(Ad.class);
+    public ReactiveRedisOperations<String, Object> redisOperations(ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
-        RedisSerializationContext.RedisSerializationContextBuilder<String, Ad> builder =
+        RedisSerializationContext.RedisSerializationContextBuilder<String, Object> builder =
                 RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
 
-        RedisSerializationContext<String, Ad> serializationContext = builder.value(serializer).hashValue(serializer)
+        RedisSerializationContext<String, Object> serializationContext = builder.value(serializer).hashValue(serializer)
                 .hashKey(serializer).build();
 
         return new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, serializationContext);
