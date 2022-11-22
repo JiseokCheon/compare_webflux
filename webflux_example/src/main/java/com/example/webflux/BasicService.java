@@ -51,9 +51,7 @@ public class BasicService {
     Mono<Object> findReactorList(String targetKey) {
 
         return reactiveRedisOperations.opsForValue().get(targetKey)
-                .flatMap(obj ->
-                        reactiveRedisOperations.opsForValue().multiGet(objectMapper.convertValue(obj, AdTarget.class).getAdsNoList())
-                );
+                .flatMap(obj -> reactiveRedisOperations.opsForValue().multiGet(objectMapper.convertValue(obj, AdTarget.class).getAdsNoList()));
     }
 }
 

@@ -38,7 +38,7 @@ public class BasicRouter {
                         serverRequest.bodyToMono(AdTarget.class)
                                 .doOnNext(basicService::loadTargetKey)
                                 .then(ServerResponse.ok()
-                                        .body(BodyInserters.fromValue("Load Data Completed")))
+                                        .body(BodyInserters.fromValue("Load Targeting Data Completed")))
                 )
                 .build();
     }
