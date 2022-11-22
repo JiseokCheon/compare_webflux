@@ -28,7 +28,7 @@ public class BasicService {
 
 
     public List<Ad> findNormalList(String targetKey) {
-        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).adsNoList))
+        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).getAdsNoList()))
                 .stream()
                 .map(obj -> objectMapper.convertValue(obj, Ad.class))
                 .collect(Collectors.toList());
