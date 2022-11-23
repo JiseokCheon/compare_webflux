@@ -28,10 +28,11 @@ public class BasicService {
 
 
     public List<Ad> findNormalList(String targetKey) {
+
         return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).getAdsNoList()))
                 .stream()
                 .map(obj -> objectMapper.convertValue(obj, Ad.class))
-//                .sorted(Comparator.comparing(Ad::getWeight))
+                .sorted(Comparator.comparing(Ad::getWeight))
                 .collect(Collectors.toList());
     }
 }

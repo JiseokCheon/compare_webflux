@@ -34,8 +34,7 @@ public class RedisConfig {
         RedisSerializationContext.RedisSerializationContextBuilder<String, Object> builder =
                 RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
 
-        RedisSerializationContext<String, Object> serializationContext = builder.value(serializer).hashValue(serializer)
-                .hashKey(serializer).build();
+        RedisSerializationContext<String, Object> serializationContext = builder.value(serializer).value(serializer).build();
 
         return new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, serializationContext);
     }

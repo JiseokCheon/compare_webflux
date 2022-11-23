@@ -28,6 +28,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.github.kstyrc/embedded-redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
 
+    implementation 'io.projectreactor.tools:blockhound:1.0.6.RELEASE'
+
     compileOnly 'org.projectlombok:lombok'
 
     annotationProcessor 'org.projectlombok:lombok'

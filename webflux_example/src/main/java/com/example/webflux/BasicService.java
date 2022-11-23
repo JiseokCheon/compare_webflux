@@ -22,7 +22,7 @@ public class BasicService {
 
     private static final AtomicInteger count = new AtomicInteger(0);
 
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     void loadData() {
         List<Ad> data = new ArrayList<>();
@@ -41,12 +41,16 @@ public class BasicService {
     }
 
     void loadTargetKey(AdTarget adTarget) {
-        reactiveRedisOperations.opsForValue().set(adTarget.getKey(), adTarget).subscribe();
+        reactiveRedisOperations.opsForSet().add(adTarget.getKey(), adTarget)
+                .subscribe();
     }
 
     Mono<Object> findReactorList(String targetKey) {
         return reactiveRedisOperations.opsForValue().get(targetKey)
                 .flatMap(obj -> reactiveRedisOperations.opsForValue().multiGet(objectMapper.convertValue(obj, AdTarget.class).getAdsNoList()));
+
+//                .flatMap(obj -> reactiveRedisOperations.opsForValue().multiGet(objectMapper.convertValue(obj, AdTarget.class).getAdsNoList()));
     }
+
 }
 
