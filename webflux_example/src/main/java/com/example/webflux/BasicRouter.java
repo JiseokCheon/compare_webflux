@@ -37,6 +37,7 @@ public class BasicRouter {
                 .POST("/data-target", serverRequest ->
                         serverRequest.bodyToMono(AdTarget.class)
                                 .doOnNext(basicService::loadTargetKey)
+                                .log()
                                 .then(ServerResponse.ok()
                                         .body(BodyInserters.fromValue("Load Targeting Data Completed")))
                 )

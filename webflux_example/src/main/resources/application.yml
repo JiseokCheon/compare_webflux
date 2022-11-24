@@ -2,3 +2,21 @@ spring:
   redis:
     host: localhost
     port: 6379
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/fpc_example?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
+  jpa:
+    show-sql: false
+    hibernate.ddl-auto: create
+    hibernate.dialect.storage_engine: innodb
+    properties:
+      hibernate.format_sql: true
+      hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
+
+logging.level:
+  web: DEBUG
+  org.springframework: INFO
+  com.web: DEBUG

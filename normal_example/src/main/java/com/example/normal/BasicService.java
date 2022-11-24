@@ -28,8 +28,9 @@ public class BasicService {
 
 
     public List<Ad> findNormalList(String targetKey) {
+        List<String> adsNoList = objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).getAdsNoList();
 
-        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).getAdsNoList()))
+        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(adsNoList))
                 .stream()
                 .map(obj -> objectMapper.convertValue(obj, Ad.class))
                 .sorted(Comparator.comparing(Ad::getWeight))
