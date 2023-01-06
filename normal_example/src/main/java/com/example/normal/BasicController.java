@@ -22,7 +22,7 @@ public class BasicController {
     }
 
     @GetMapping("/normal-list")
-    public ResponseEntity<List<Ad>> list(String key){
+    public ResponseEntity<List<Object>> list(String key){
         return ResponseEntity.ok(basicService.findNormalList(key));
     }
 

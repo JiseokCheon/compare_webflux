@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -27,13 +26,18 @@ public class BasicService {
     }
 
 
-    public List<Ad> findNormalList(String targetKey) {
+    public List<Object> findNormalList(String targetKey) {
+
         List<String> adsNoList = objectMapper.convertValue(redisTemplate.opsForValue().get(targetKey), AdTarget.class).getAdsNoList();
 
-        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(adsNoList))
-                .stream()
-                .map(obj -> objectMapper.convertValue(obj, Ad.class))
-                .sorted(Comparator.comparing(Ad::getWeight))
-                .collect(Collectors.toList());
+//        return adsNoList.stream().map(s -> objectMapper.convertValue(redisTemplate.opsForValue().get(s), Ad.class))
+//                .collect(Collectors.toList());
+
+
+        return Objects.requireNonNull(redisTemplate.opsForValue().multiGet(adsNoList));
+//                .stream()
+//                .map(obj -> objectMapper.convertValue(obj, Ad.class))
+//                .sorted(Comparator.comparing(Ad::getWeight))
+//                .collect(Collectors.toList());
     }
 }
